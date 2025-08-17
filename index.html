@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Drive Links Library</title>
+  <link rel="icon" href="https://ssl.gstatic.com/docs/doclist/images/infinite_arrow_favicon_5.ico">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --card: #f4f4f4;
+      --accent: #4caf50;
+      --border: #dddddd;
+    }
+
+    body.dark {
+      --bg: #121212;
+      --text: #f2f2f2;
+      --card: #1e1e1e;
+      --border: #333;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    header {
+      background-color: var(--accent);
+      padding: 20px;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+
+    .dark-toggle {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 16px;
+      background-color: var(--card);
+      color: var(--text);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .link-card {
+      background-color: var(--card);
+      border-left: 4px solid var(--accent);
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+    }
+
+    .link-card:hover {
+      transform: scale(1.02);
+    }
+
+    .link-card a {
+      color: var(--accent);
+      font-weight: bold;
+      font-size: 17px;
+      text-decoration: none;
+    }
+
+    .description {
+      font-size: 14px;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .icon {
+      margin-right: 8px;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>📁 Google Drive Resources</h1>
+    <button class="dark-toggle" onclick="toggleDark()">🌙</button>
+  </header>
+
+  <div class="container">
+    <input type="text" id="searchInput" placeholder="🔍 Search anything..." onkeyup="filterLinks()">
+    <select id="categoryFilter" onchange="filterLinks()">
+      <option value="all">📂 All Categories</option>
+      <option value="ebooks">📚 Ebooks</option>
+      <option value="videos">🎬 Videos</option>
+      <option value="software">💻 Software</option>
+    </select>
+
+    <div class="grid" id="linkContainer">
+      <!-- Links will be injected here -->
+    </div>
+  </div>
+
+  <script>
+    const links = [
+      {
+        title: "HTML & CSS Guide",
+        url: "https://drive.google.com/file/d/YOUR_ID/view",
+        category: "ebooks",
+        type: "pdf",
+        description: "Learn the basics of HTML and CSS for building websites."
+      },
+      {
+        title: "Modern JavaScript",
+        url: "https://drive.google.com/file/d/YOUR_ID/view",
+        category: "ebooks",
+        type: "pdf",
+        description: "Understand the fundamentals of JavaScript in 2024."
+      },
+      {
+        title: "React Crash Course",
+        url: "https://drive.google.com/file/d/YOUR_ID/view",
+        category: "videos",
+        type: "mp4",
+        description: "Step-by-step video tutorial on building apps with React."
+      },
+      {
+        title: "Windows Activator",
+        url: "https://drive.google.com/file/d/YOUR_ID/view",
+        category: "software",
+        type: "zip",
+        description: "Tool to activate Windows 10/11 (for educational use)."
+      }
+    ];
+
+    const icons = {
+      pdf: "📄",
+      mp4: "🎥",
+      zip: "🗜️",
+      exe: "💻",
+      docx: "📝",
+      xlsx: "📊",
+      pptx: "📽️",
+      default: "📁"
+    };
+
+    function renderLinks() {
+      const container = document.getElementById("linkContainer");
+      container.innerHTML = "";
+      links.forEach(link => {
+        const icon = icons[link.type] || icons.default;
+        const div = document.createElement("div");
+        div.className = "link-card";
+        div.setAttribute("data-category", link.category);
+        div.innerHTML = `
+          <a href="${link.url}" target="_blank">${icon} ${link.title}</a>
+          <p class="description">${link.description}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function filterLinks() {
+      const searchValue = document.getElementById("searchInput").value.toLowerCase();
+      const selectedCategory = document.getElementById("categoryFilter").value;
+      const cards = document.querySelectorAll(".link-card");
+
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        const matchesSearch = text.includes(searchValue);
+        const matchesCategory = selectedCategory === "all" || card.dataset.category === selectedCategory;
+
+        card.style.display = matchesSearch && matchesCategory ? "block" : "none";
+      });
+    }
+
+    function toggleDark() {
+      document.body.classList.toggle("dark");
+      const btn = document.querySelector(".dark-toggle");
+      btn.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+    }
+
+    renderLinks();
+  </script>
+</body>
+</html>
